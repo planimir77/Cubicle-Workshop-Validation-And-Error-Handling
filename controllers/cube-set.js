@@ -16,6 +16,8 @@ const createCube = async (entry) => {
 
     } catch (error) {
         console.error("Error: ", error.message);
+        res.render('create', { title: "Create page", });
+        return;
     }
 
     // Create and save a Cube in local storage database.json 

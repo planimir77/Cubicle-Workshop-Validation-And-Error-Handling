@@ -7,7 +7,11 @@ const { jwtSecret, authCookieName, saltRounds, } = config;
 const register = async (req, res) => {
     const { username, password, repeatPassword } = req.body;
     try {
-        if (password === repeatPassword) {
+
+        if (password === repeatPassword &&
+            /^[A-Za-z0-9]*$/.test(password) &&
+            password.length >= 8) {
+
             const salt = await bcrypt.genSalt(saltRounds);
             const hash = await bcrypt.hash(password, salt);
 
