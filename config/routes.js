@@ -4,6 +4,8 @@ const createAccessory = require('../controllers/accessory-set');
 const { getAccessories, getAvailableAccessories } = require('../controllers/accessory-get');
 const { register, login, logout } = require('../controllers/user')
 const checkAuth = require('../middlewares/check-auth');
+const validateUser = require('../middlewares/user-validation');
+const handleValidationErrors = require('../middlewares/handle-validation-errors');
 
 module.exports = (app) => {
     app.get('/', async (req, res) => {
@@ -88,14 +90,19 @@ module.exports = (app) => {
     app.get('/user/register', checkAuth(false), (req, res) => {
         res.render('register-page', { title: 'Register Form', });
     });
-    app.post('/user/register', checkAuth(false), async (req, res) => {
+    app.post('/user/register',
+        checkAuth(false),
+        validateUser.username,
+        validateUser.password,
+        handleValidationErrors,
+        async (req, res) => {
 
-        const success = await register(req, res);
+            const success = await register(req, res);
 
-        if (success) return res.redirect('/user/login');
+            if (success) return res.redirect('/user/login');
 
-        res.redirect('/user/register');
-    });
+            res.redirect('/user/register');
+        });
     //        Login
     app.get('/user/login', checkAuth(false), (req, res) => {
         res.render('login-page', { title: 'Login Form', });
